@@ -3,23 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEON CHARADES | EXTREME</title>
+    <title>NEON CHARADES | 40s EXTREME</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="particles-js"></div>
-    
+    <div class="scanline"></div>
+
     <div class="game-wrapper">
         <div id="start-screen" class="screen active">
             <h1 class="logo">NEON <span>CHARADES</span></h1>
-            <p class="tagline">აუხსენი სიტყვა პარტნიორს ან მოემზადე სასჯელისთვის!</p>
-            <button onclick="startGame()" class="btn-main">თამაშის დაწყება</button>
+            <p class="tagline">40 წამი, წყვილები და სასჯელები!</p>
+            <button onclick="showScreen('lobby-screen')" class="btn-main">მოთამაშეების დამატება</button>
+        </div>
+
+        <div id="lobby-screen" class="screen">
+            <h2 class="neon-text">მოთამაშეები</h2>
+            <div class="input-group">
+                <input type="text" id="player-name-input" placeholder="სახელი...">
+                <button onclick="addPlayer()" class="btn-secondary">დამატება</button>
+            </div>
+            <div id="player-list-display" class="player-list"></div>
+            <button id="pair-btn" onclick="generatePairs()" class="btn-main" style="display:none;">წყვილების შექმნა</button>
+        </div>
+
+        <div id="pairs-screen" class="screen">
+            <h2 class="neon-text">ემზადება წყვილი:</h2>
+            <div id="current-pair-display" class="word-card">...</div>
+            <button onclick="startRound()" class="btn-main">დავიწყოთ!</button>
         </div>
 
         <div id="play-screen" class="screen">
-            <div class="timer-circle">
-                <div class="timer" id="timer">60</div>
-            </div>
+            <div class="timer-circle"><div class="timer" id="timer">40</div></div>
             <div class="word-card" id="word-display">...</div>
             <div class="controls">
                 <button onclick="nextWord(false)" class="btn-fail">✖ ვერა</button>
@@ -29,14 +44,12 @@
 
         <div id="result-screen" class="screen">
             <h2 class="neon-text">დრო ამოიწურა!</h2>
-            <div class="final-score">ქულა: <span id="final-points">0</span></div>
-            
+            <div id="round-results" class="final-score">ქულა: 0</div>
             <div class="punishment-box">
-                <h3 class="flash-text">🔥 წაგებულის სურვილი:</h3>
-                <p id="punishment-text">იტვირთება...</p>
+                <h3 class="flash-text">🔥 წაგებულის სასჯელი:</h3>
+                <p id="punishment-text">...</p>
             </div>
-
-            <button onclick="location.reload()" class="btn-main">შემდეგი წყვილი</button>
+            <button onclick="showNextPair()" class="btn-main">შემდეგი წყვილი</button>
         </div>
     </div>
 
