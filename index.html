@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PARTY CHARADES PRO 🔥</title>
+
+<style>
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+font-family:Arial;
+background:#050507;
+color:white;
+}
+
+/* 🌌 background animation */
+body::before{
+content:"";
+position:absolute;
+inset:-60%;
+background:
+radial-gradient(circle at 20% 20%, rgba(255,0,0,0.25), transparent 40%),
+radial-gradient(circle at 80% 30%, rgba(0,0,0,0.9), transparent 50%),
+radial-gradient(circle at 50% 80%, rgba(255,0,85,0.15), transparent 45%);
+filter:blur(80px);
+animation:move 10s infinite alternate;
+z-index:0;
+}
+
+@keyframes move{
+0%{transform:scale(1);}
+100%{transform:scale(1.2);}
+}
+
+.screen{
+display:none;
+text-align:center;
+padding:20px;
+background:rgba(20,0,0,0.75);
+border-radius:20px;
+width:90%;
+max-width:450px;
+z-index:2;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,0,0,0.3);
+}
+
+.active{display:block;}
+
+button{
+padding:16px;
+width:100%;
+margin:6px;
+border:none;
+border-radius:12px;
+font-size:1rem;
+font-weight:bold;
+cursor:pointer;
+}
+
+.btn{background:#ff0033;color:white;}
+
+input{
+padding:12px;
+width:100%;
+border-radius:10px;
+border:none;
+margin:6px 0;
+}
+
+.word{
+font-size:2rem;
+color:#ff0033;
+margin:15px 0;
+}
+
+.timer{
+font-size:2.5rem;
+color:#ff0033;
+}
+
+.rules{
+text-align:left;
+font-size:0.95rem;
+line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<!-- START -->
+<div id="start" class="screen active">
+<h1>🔥 PARTY CHARADES PRO</h1>
+<button class="btn" onclick="show('rules')">📜 RULES</button>
+</div>
+
+<!-- RULES -->
+<div id="rules" class="screen">
+<h2>📜 RULES</h2>
+<div class="rules">
+✔ 2+ მოთამაშე 👥<br>
+✔ თითოეულს ეძლევა განსხვავებული სიტყვა 🎯<br>
+✔ ერთი ხსნის, მეორე გამოიცნობს 🧠<br>
+✔ 60 წამი ⏱️<br>
+✔ 5 სწორი = გამარჯვება 🏆<br>
+❌ თუ ვერ შეძლებთ → სასჯელი 😈
+</div>
+<button class="btn" onclick="show('lobby')">▶ START</button>
+</div>
+
+<!-- LOBBY -->
+<div id="lobby" class="screen">
+<h2>👥 Players</h2>
+<input id="inp" placeholder="სახელი">
+<button class="btn" onclick="add()">ADD</button>
+<div id="list"></div>
+
+<button id="startBtn" class="btn" style="display:none" onclick="startGame()">START GAME</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="screen">
+<h2>🎮 PLAY</h2>
+<div class="timer" id="time">60</div>
+<div class="word" id="word">---</div>
+
+<button class="btn" onclick="correct()">✅ CORRECT</button>
+<button class="btn" onclick="nextWord()">➡ NEXT</button>
+
+<div id="score">0 / 5</div>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="screen">
+<h2>🏆 RESULT</h2>
+<div id="final"></div>
+<p id="punish"></p>
+<button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+</div>
+
+<script>
+
+/* 🎯 WORDS (sample big pool) */
+const words=[
+"ხინკალი","ხაჭაპური","პიცა","ბეტმენი","ჯოკერი","ავატარი",
+"მატრიქსი","ნარუტო","სპაიდერმენი","ლომი","ვეფხვი","ზვიგენი",
+"ტელეფონი","კომპიუტერი","დრონი","გიტარა","ფეხბურთი","კალათბურთი"
+];
+
+/* 😈 punishments */
+const punishments=[
+"იმღერე ხმამაღლა 🎤","იცეკვე 30 წამი 🕺","დაიყვირე 😂",
+"რობოტივით ილაპარაკე 🤖","სასაცილო სახე 😆",
+"რეპი იმღერე 🎶","victory dance 🏆","air guitar 🎸",
+"slow motion walk 🐢","statue 30 წამი 🗿"
+];
+
+let players=[];
+let currentPlayer=0;
+let score=0;
+let time=60;
+let timer;
+let currentWord="";
+
+/* UI */
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+/* add player */
+function add(){
+let v=document.getElementById('inp').value.trim();
+if(!v)return;
+players.push(v);
+document.getElementById('inp').value="";
+
+document.getElementById('list').innerHTML=
+players.map(p=>`<div>${p}</div>`).join("");
+
+if(players.length>=2)
+document.getElementById('startBtn').style.display="block";
+}
+
+/* start */
+function startGame(){
+score=0;
+time=60;
+currentPlayer=0;
+
+show('game');
+nextWord();
+
+timer=setInterval(()=>{
+time--;
+document.getElementById('time').innerText=time;
+if(time<=0){
+clearInterval(timer);
+end();
+}
+},1000);
+}
+
+/* word */
+function nextWord(){
+currentWord=words[Math.floor(Math.random()*words.length)];
+document.getElementById('word').innerText=currentWord;
+}
+
+/* correct */
+function correct(){
+score++;
+document.getElementById('score').innerText=score+" / 5";
+
+if(score>=5){
+clearInterval(timer);
+win();
+}
+nextWord();
+}
+
+/* end */
+function end(){
+document.getElementById('final').innerText="❌ ვერ მოიგეთ";
+document.getElementById('punish').innerText=
+punishments[Math.floor(Math.random()*punishments.length)];
+show('result');
+}
+
+/* win */
+function win(){
+document.getElementById('final').innerText="🎉 გამარჯვება!";
+document.getElementById('punish').innerText="😎 no punishment";
+show('result');
+}
+
+</script>
+
+</body>
+</html>
