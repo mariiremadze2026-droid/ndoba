@@ -3,70 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRUST & TREACHERY</title>
+    <title>NEON CHARADES | EXTREME</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="night-mode">
+<body>
     <div id="particles-js"></div>
-    <div class="scanline"></div>
+    
+    <div class="game-wrapper">
+        <div id="start-screen" class="screen active">
+            <h1 class="logo">NEON <span>CHARADES</span></h1>
+            <p class="tagline">აუხსენი სიტყვა პარტნიორს ან მოემზადე სასჯელისთვის!</p>
+            <button onclick="startGame()" class="btn-main">თამაშის დაწყება</button>
+        </div>
 
-    <audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-    <audio id="betraySound" src="https://assets.mixkit.co/active_storage/sfx/212/212-preview.mp3"></audio>
-    <audio id="trustSound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
-
-    <div class="game-container">
-        <section id="menu-screen" class="screen active">
-            <h1 class="logo">TRUST <span>&</span> TREACHERY</h1>
-            <p class="tagline">ვერავის ენდობი. მარტო ვერ გაიმარჯვებ.</p>
-            <button onclick="createRoom()" class="btn-primary">თამაშის დაწყება</button>
-            <button onclick="showScreen('rules-screen')" class="btn-secondary">როგორ ვითამაშოთ?</button>
-        </section>
-
-        <section id="rules-screen" class="screen">
-            <h2>📜 წესები და ქულები</h2>
-            <div class="rules-text">
-                <p>🤝 <b>ნდობა + ნდობა:</b> ორივეს +3 ქულა</p>
-                <p>😈 <b>ღალატი + ნდობა:</b> მოღალატეს +5, მსხვერპლს -2</p>
-                <p>⚔️ <b>ღალატი + ღალატი:</b> ორივეს -1 ქულა</p>
-                <p><b>მუღამი:</b> დაითანხმე მეგობარი ნდობაზე და უღალატე... თუ გაბედავ!</p>
+        <div id="play-screen" class="screen">
+            <div class="timer-circle">
+                <div class="timer" id="timer">60</div>
             </div>
-            <button onclick="showScreen('menu-screen')" class="btn-secondary">უკან</button>
-        </section>
-
-        <section id="lobby-screen" class="screen">
-            <h2>მოთამაშეები (წყვილი რიცხვი)</h2>
-            <div class="input-group">
-                <input type="text" id="new-player-name" placeholder="სახელი...">
-                <button onclick="addNewPlayer()" class="btn-secondary">დამატება +</button>
+            <div class="word-card" id="word-display">...</div>
+            <div class="controls">
+                <button onclick="nextWord(false)" class="btn-fail">✖ ვერა</button>
+                <button onclick="nextWord(true)" class="btn-success">✔ გამოიცნო</button>
             </div>
-            <div class="player-list" id="player-list"></div>
-            <button onclick="startOfflineGame()" class="btn-start" id="start-game-btn" style="display:none;">რაუნდის დაწყება</button>
-        </section>
+        </div>
 
-        <section id="game-screen" class="screen">
-            <span id="phase-text" class="phase-indicator neon-text">ღამის ფაზა 🌙</span>
-            <div id="pass-device-screen">
-                <h2 id="next-player-instruction">გადაეცი ტელეფონი: <span>...</span></h2>
-                <button onclick="showSecretRole()" class="btn-primary">ჩემი როლის ნახვა</button>
+        <div id="result-screen" class="screen">
+            <h2 class="neon-text">დრო ამოიწურა!</h2>
+            <div class="final-score">ქულა: <span id="final-points">0</span></div>
+            
+            <div class="punishment-box">
+                <h3 class="flash-text">🔥 წაგებულის სურვილი:</h3>
+                <p id="punishment-text">იტვირთება...</p>
             </div>
 
-            <div id="role-reveal-screen" style="display:none;">
-                <h3 id="current-player-role" class="neon-text">...</h3>
-                <p id="role-desc" class="role-description"></p>
-                <div class="mission-box">
-                    <strong>საიდუმლო მისია:</strong>
-                    <p id="current-mission">...</p>
-                </div>
-                <p>შენი ქულები: <b id="my-points">10</b></p>
-                <hr>
-                <div class="action-box">
-                    <p>შენი არჩევანი:</p>
-                    <button onclick="makeDecision('trust')" class="btn-trust">🤝 ნდობა</button>
-                    <button onclick="makeDecision('betray')" class="btn-betray">😈 ღალატი</button>
-                </div>
-            </div>
-        </section>
+            <button onclick="location.reload()" class="btn-main">შემდეგი წყვილი</button>
+        </div>
     </div>
+
+    <audio id="correct-sound" src="https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"></audio>
+    <audio id="tick-sound" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
