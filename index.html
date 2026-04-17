@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON CHARADES PRO</title>
+
+<style>
+body { margin:0; background:#0a0a0b; color:white; font-family:Arial; display:flex; justify-content:center; align-items:center; height:100vh; }
+.screen { display:none; text-align:center; padding:20px; }
+.active { display:block; }
+button { padding:12px; margin:5px; border:none; border-radius:10px; cursor:pointer; }
+.btn-main { background:#00ff88; color:black; width:100%; }
+.btn-fail { background:#333; color:#ff0055; }
+.btn-success { background:#00ff88; }
+.player-tag { display:inline-block; margin:5px; padding:5px 10px; border:1px solid #00ff88; border-radius:20px; color:#00ff88; }
+.word { font-size:2rem; margin:20px 0; color:#00ff88; }
+.timer { font-size:2rem; margin:10px 0; }
+</style>
+</head>
+
+<body>
+
+<div id="start" class="screen active">
+<h1>NEON CHARADES</h1>
+<button class="btn-main" onclick="show('lobby')">დაწყება</button>
+</div>
+
+<div id="lobby" class="screen">
+<h2>Players</h2>
+<input id="inp" placeholder="სახელი">
+<button onclick="add()">Add</button>
+<div id="list"></div>
+<button id="startBtn" class="btn-main" style="display:none" onclick="makePairs()">Start</button>
+</div>
+
+<div id="pair" class="screen">
+<h2>Pair</h2>
+<div id="pairText"></div>
+<button class="btn-main" onclick="startGame()">READY</button>
+</div>
+
+<div id="game" class="screen">
+<div class="timer" id="time">40</div>
+<div class="word" id="word">---</div>
+<button class="btn-fail" onclick="next(false)">FAIL</button>
+<button class="btn-success" onclick="next(true)">DONE</button>
+</div>
+
+<div id="result" class="screen">
+<h2>TIME UP</h2>
+<div id="score"></div>
+<p id="punish"></p>
+<button class="btn-main" onclick="nextPair()">NEXT PAIR</button>
+</div>
+
+<script>
+const words=["ხინკალი","ბეტმენი","პინგვინი","სელფი","ტიკტოკი","გიტარა","ზვიგენი","კოსმოსი"];
+const punish=["20 ჩაჯდომა","იმღერე","პლანკა 40წმ","იცეკვე"];
+
+let players=[], pairs=[], index=0, score=0, time=40, timer;
+
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+function add(){
+let v=document.getElementById('inp').value.trim();
+if(!v)return;
+players.push(v);
+document.getElementById('inp').value="";
+document.getElementById('list').innerHTML=
+players.map(p=>`<span class="player-tag">${p}</span>`).join("");
+if(players.length>=2) document.getElementById('startBtn').style.display="block";
+}
+
+function makePairs(){
+let sh=[...players].sort(()=>Math.random()-0.5);
+pairs=[];
+for(let i=0;i<sh.length;i+=2){
+pairs.push([sh[i],sh[i+1]||sh[0]]);
+}
+index=0;
+showPair();
+}
+
+function showPair(){
+document.getElementById('pairText').innerText=pairs[index].join(" + ");
+show('pair');
+}
+
+function startGame(){
+score=0;
+time=40;
+show('game');
+nextWord();
+clearInterval(timer);
+timer=setInterval(()=>{
+time--;
+document.getElementById('time').innerText=time;
+if(time<=0){ clearInterval(timer); end(); }
+},1000);
+}
+
+function next(correct){
+if(correct) score++;
+nextWord();
+}
+
+function nextWord(){
+document.getElementById('word').innerText=
+words[Math.floor(Math.random()*words.length)];
+}
+
+function end(){
+document.getElementById('score').innerText="Score: "+score;
+document.getElementById('punish').innerText=
+punish[Math.floor(Math.random()*punish.length)];
+show('result');
+}
+
+function nextPair(){
+index++;
+if(index>=pairs.length){
+alert("Game Over");
+location.reload();
+return;
+}
+showPair();
+}
+</script>
+
+</body>
+</html>
