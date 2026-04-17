@@ -1,50 +1,63 @@
 :root {
-    --neon-green: #00ff88;
-    --neon-red: #ff0055;
+    --neon: #00ff88;
+    --red: #ff0055;
+    --bg: #050505;
 }
 
 body {
-    margin: 0;
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
-    transition: background 1.5s ease;
+    margin: 0; background: var(--bg); color: white;
+    font-family: 'Segoe UI', sans-serif; overflow: hidden;
 }
-
-.night-mode { background: radial-gradient(circle, #1a0033 0%, #050505 100%); }
-.day-mode { background: radial-gradient(circle, #004d33 0%, #050505 100%); }
 
 #particles-js { position: fixed; width: 100%; height: 100%; z-index: -1; }
 
-.scanline {
-    width: 100%; height: 5px; background: rgba(0, 255, 136, 0.05);
-    position: absolute; animation: scan 3s linear infinite; z-index: 0;
+.game-wrapper {
+    height: 100vh; display: flex; justify-content: center; align-items: center;
+    text-align: center;
 }
-@keyframes scan { 0% { top: 0; } 100% { top: 100vh; } }
 
-.game-container { height: 100vh; display: flex; justify-content: center; align-items: center; }
+.screen { display: none; width: 90%; max-width: 400px; animation: slideUp 0.4s ease; }
+.active { display: block !important; }
 
-.screen {
-    display: none; background: rgba(0, 0, 0, 0.9);
-    padding: 30px; border-radius: 20px; border: 1px solid var(--neon-green);
-    text-align: center; width: 320px; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+.logo { font-size: 2.5rem; letter-spacing: 2px; }
+.logo span { color: var(--red); text-shadow: 0 0 15px var(--red); }
+
+.timer-circle {
+    width: 100px; height: 100px; border: 4px solid var(--red);
+    border-radius: 50%; margin: 0 auto 20px;
+    display: flex; justify-content: center; align-items: center;
+    box-shadow: 0 0 20px var(--red);
 }
-.screen.active { display: block; animation: fadeIn 0.4s; }
 
-.player-list { margin: 15px 0; max-height: 120px; overflow-y: auto; border: 1px solid #222; padding: 5px; }
-.player-tag { display: inline-block; padding: 5px 10px; margin: 3px; border: 1px solid var(--neon-green); border-radius: 4px; font-size: 0.8rem; }
+.timer { font-size: 2.5rem; font-weight: bold; color: var(--red); }
 
-input { width: 80%; padding: 10px; background: #111; border: 1px solid #333; color: white; margin-bottom: 10px; }
+.word-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 60px 20px; border-radius: 20px;
+    border: 2px solid var(--neon);
+    font-size: 2.5rem; font-weight: bold;
+    margin-bottom: 30px; box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+    color: var(--neon);
+}
 
-.mission-box { background: rgba(255, 255, 255, 0.05); padding: 10px; border-radius: 10px; border-left: 3px solid var(--neon-red); margin: 15px 0; font-size: 0.9rem; }
+.controls { display: flex; gap: 15px; }
 
-button { cursor: pointer; border: none; padding: 12px; border-radius: 5px; width: 100%; font-weight: bold; margin: 5px 0; }
-.btn-primary { background: var(--neon-green); color: black; }
-.btn-secondary { background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); }
-.btn-trust { background: #2ecc71; color: white; }
-.btn-betray { background: var(--neon-red); color: white; }
+button {
+    padding: 18px; border-radius: 15px; border: none; font-weight: bold;
+    cursor: pointer; transition: 0.2s; width: 100%; font-size: 1rem;
+}
 
-.neon-text { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
-#next-player-instruction span { display: block; font-size: 2.2rem; color: var(--neon-green); margin-top: 10px; }
+.btn-main { background: var(--neon); color: black; box-shadow: 0 0 15px var(--neon); }
+.btn-success { background: #2ecc71; color: white; }
+.btn-fail { background: var(--red); color: white; }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.punishment-box {
+    background: rgba(255, 0, 85, 0.15);
+    border: 2px dashed var(--red);
+    padding: 25px; margin: 25px 0; border-radius: 15px;
+}
+
+.flash-text { animation: blink 0.8s infinite; color: var(--red); }
+
+@keyframes blink { 50% { opacity: 0; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } }
